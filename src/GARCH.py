@@ -156,7 +156,7 @@ X = 100* lh
 TS = X
 res_tup = _get_best_model(TS) #aic: 2788.90 | order: (3, 0, 1)
 
-gam = arch_model(res_tup[2].resid, p=3, o=0, q=1, vol='Garch', dist='StudentsT')
+gam = arch_model(res_tup[2].resid, p=2, o=0, q=1, vol='Garch', dist='StudentsT')
 gres = gam.fit(update_freq=5, disp='off')
 print(gres.summary())
 adf = ADF(gres.resid**2)
@@ -165,13 +165,7 @@ print(adf.summary().as_text()) #p = 0.00, residue it is stationary
 
 am = arch_model(X, p=3, q=1, o=0,power=2.0, vol='Garch', dist='StudentsT')
 res = am.fit(update_freq=5)
-print(res.summary())
-eam = arch_model(X, p=3,q=1, o=0, power=2.0, vol='EGARCH', dist='StudentsT')
-eres = eam.fit(update_freq=5)
-print(res.summary())
-gjam = arch_model(X, p=3, o=1, q=0, power=2.0,  dist='StudentsT')
-gjres = gjam.fit(update_freq=5, disp='off')
-print(gjres.summary())
+
 
 std_resid = res.resid / res.conditional_volatility
 unit_var_resid = res.resid / res.resid.std()

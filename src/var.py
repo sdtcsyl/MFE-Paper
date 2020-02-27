@@ -19,15 +19,16 @@ import files
 #read CME lean hogs futures' data from excel
 lh = files.read_data(r'LeanHogsFutures.xlsx')
 #read CME corn futures' data from excel
-cn = files.read_data(r'EEEHogFuture.xlsx')
+cn = files.read_data(r'CornFutures.xlsx')
 #read CME live cattle futures' data from excel
-lc = files.read_data(r'KRLeanHogsFutures.xlsx')
-start_time = dt.datetime(2000, 1, 1)
-data = pd.DataFrame({'LeanHogs':lh['Close'][lh.index > start_time]})
-data = data.join(pd.DataFrame({'Ehog' : cn['Close'][cn.index > start_time]}))
-data = data.join(pd.DataFrame({'Khog' : lc['Close'][lc.index > start_time]}))
+lc = files.read_data(r'LivecCattleFutures.xlsx')
+start_time = dt.datetime(2010, 1, 1)
+data = pd.DataFrame({'LeanHogs':lh['Close']['2010':'2013']})
+data = data.join(pd.DataFrame({'Corn' : cn['Close']['2010':'2013']}))
+data = data.join(pd.DataFrame({'Livecattle' : lc['Close']['2010':'2013']}))
 #data = data.resample('M').mean() 
 data = np.log(data / data.shift(1)).dropna() # d 1
+data = data.resample('M').mean() # resample daily data to monthly data
 
 
 #forward fill the NA
@@ -38,9 +39,9 @@ data = data.fillna(method='ffill')
 from arch.unitroot import ADF, KPSS, DFGLS, PhillipsPerron, ZivotAndrews, VarianceRatio
 adf = ADF(data['LeanHogs'])
 print(adf.summary().as_text())
-adf = ADF(data['Ehog'])
+adf = ADF(data['Corn'])
 print(adf.summary().as_text())
-adf = ADF(data['Khog'])
+adf = ADF(data['Livecattle'])
 print(adf.summary().as_text())
 
 
@@ -50,15 +51,15 @@ x_train, x_test = data[0:-n_obs], data[-n_obs:]
 
 #Granger Causality test
 from statsmodels.tsa.stattools import grangercausalitytests
-print(grangercausalitytests(x_train[['LeanHogs','Ehog']], maxlag=15, addconst=True, verbose=True))
-print(grangercausalitytests(x_train[['LeanHogs','Khog']], maxlag=15, addconst=True, verbose=True))
-print(grangercausalitytests(x_train[['Ehog','Khog']], maxlag=15, addconst=True, verbose=True))
+print(grangercausalitytests(x_train[['LeanHogs','Corn']], maxlag=15, addconst=True, verbose=True))
+print(grangercausalitytests(x_train[['LeanHogs','Livecattle']], maxlag=15, addconst=True, verbose=True))
+print(grangercausalitytests(x_train[['Corn','Livecattle']], maxlag=15, addconst=True, verbose=True))
 
 
 # make a VAR model
 model = VAR(data)
 #Lag order selection
-results = model.fit(maxlags=15, ic='aic')
+results = model.fit(maxlags=11, ic='aic')
 results.summary()
 results.plot()
 
