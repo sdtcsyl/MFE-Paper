@@ -13,13 +13,13 @@ import files
 
 
 #read CME lean hogs futures' data from excel
-lh = pd.read_excel(files.data_path + r'\LeanHogsFutures.xlsx')
-lh = lh.set_index('Date')
-lh = lh.iloc[::-1] # reverse the data according to the index date
+lh = files.read_data(r'LeanHogsFutures.xlsx')
+lh = pd.DataFrame(lh['Close'].dropna())  # reverse the data according to the index date
+lh['Return'] = np.log(lh['Close'] / lh['Close'].shift(1))* 100
+df = lh['1992':'2004']
 
-df = pd.DataFrame(lh['Close'])
 df = df.dropna()
-df['Return'] = np.log(df['Close'] / df['Close'].shift(1))
+
 
 #series.hist()
 #series.plot.hist(bins=200)
@@ -34,14 +34,16 @@ df[['Close', '42d', '252d']].plot(figsize=(8, 5))
 df['Mov_Vol'] = df['Return'].rolling(252).std()* math.sqrt(252)
 
 # plot in dataframe 
-df[['Close', 'Mov_Vol', 'Return']].plot(subplots=True, style='b', figsize=(8, 7), 
+df[['Close', 'Mov_Vol', 'Return']].plot(subplots=True,  figsize=(8, 7), 
   title=['CME Lean Hogs Future Close Price','CME Lean Hogs Future Annualized Volatility',
          'CME Lean Hogs Future Return'])
 #plt.savefig(files.image_path + '\LH_close_vol_return.png')
 
 
 
-data = 100*df['Return'].resample('M').mean() # resample daily data to monthly data
+data = lh['Close'].resample('M').mean() # resample daily data to monthly data
+data = data['1992':'2004']
+data =  np.log(data / data.shift(1)).dropna()*100 # d 1
 adf = ADF(data)
 print(adf.summary().as_text())
 kpss = KPSS(data)

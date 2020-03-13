@@ -2,16 +2,31 @@ install.packages("tseries")
 install.packages("fGarch")
 install.packages("forecast")
 install.packages("hutils")
+install.packages("dplyr")
 library(forecast)
 library(tseries)
 library(fGarch)
 library(hutils)
 
 # xls files
-my_data <- read.csv("C:/Users/Eric Su/Documents/GitHub/MFE-Paper/data/leanhogsfudif2.csv")
+my_data <- read.csv("C:/Users/Eric Su/Documents/GitHub/MFE-Paper/data/LeanHogsFutures.csv")
+names(my_data)[1] <- "Date"
+my_data$date <- as.Date(my_data$Date)
+rownames(my_data) <- my_data$Date
 
-data = my_data
-data <- data[rowSums(is.na(data))==0,]
+
+
+data = my_data['Close']
+log_price=log(my_data[,4])
+
+return=log_price[2:nrow(log_price),]-log_price[1:(nrow(log_price)-1),] ## Growth rate
+return=return*100 ## Percentage growth rates
+
+return_train = return[1:(nrow(return)-7) ,]
+return_test = return[(nrow(return)-7):nrow(return) ,]
+
+rm(data, log_price, return)
+
 par(mfrow=c(2,3))
 plot(data[,2], pch = 20)
 acf(data[,2])

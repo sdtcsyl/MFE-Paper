@@ -17,9 +17,9 @@ import files
 data = files.read_data(r'LeanHogsFutures.xlsx')
 data = pd.DataFrame(data['Close'].dropna()) #[data.index > dt.datetime(2010, 1, 1)].dropna())
 data = data.resample('M').mean() # resample daily data to monthly data
-#data = data['2010':'2018']
+data = data['1992':'2004']
 data.to_csv(r'LeanHogsFu.csv')
-lh =  np.log(data / data.shift(1)).dropna() # d 1
+lh =  np.log(data / data.shift(1)).dropna()*100 # d 1
 lh.to_csv(r'leanhogsfudif.csv')
 lh.plot(figsize=(19, 4))
 plt.show()
@@ -101,9 +101,9 @@ results.plot_diagnostics(figsize=(18, 8))
 plt.show()
 
 #one-step ahead forecast, we also compare the true values with the forecast predictions.
-pred = results.get_prediction(start=pd.to_datetime('2017-01-31'), dynamic=False)
+pred = results.get_prediction(start=pd.to_datetime('2003-12-31'), dynamic=False)
 pred_ci = pred.conf_int()
-ax = lh['2010':].plot(label='observed')
+ax = lh['2000':].plot(label='observed')
 pred.predicted_mean.plot(ax=ax, label='One-step ahead Forecast', alpha=.7, figsize=(14, 4))
 ax.fill_between(pred_ci.index,
                 pred_ci.iloc[:, 0],
@@ -117,10 +117,14 @@ plt.show()
 
 #calculate the Mean squared error between predictions and reality
 y_forecasted = pd.Series(list(pred.predicted_mean))
-y_truth = pd.Series(list(lh['Close']['2017':'2018']) )
+y_truth = pd.Series(list(lh['Close']['2004':]) )
 mse = ((y_forecasted - y_truth) ** 2).mean()
 print('The Mean Squared Error is {}'.format(round(mse, 2)))
 print('The Root Mean Squared Error is {}'.format(round(np.sqrt(mse), 2)))
+
+from sklearn.metrics import  mean_squared_error
+print(np.sqrt(mean_squared_error(lh[-13:], pred.predicted_mean )))
+
 
 ###Garch Test
 resid = results.resid
