@@ -2,7 +2,6 @@
 """
 @author: Yulu Su
 """
-#https://towardsdatascience.com/how-to-forecast-sales-with-python-using-sarima-model-ba600992fa7d
 
 import warnings
 import itertools
@@ -33,15 +32,6 @@ dfoutput = pd.Series(dftest[0:4], index=['Test Statistic','p-value','#Lags Used'
 for key,value in dftest[4].items():
     dfoutput['Critical Value (%s)'%key] = value
 print(dfoutput)
-
-#Results of Dickey-Fuller Test:
-#Test Statistic                -8.388264e+00
-#p-value                        2.405295e-13 p_value is extremely small and we reject the h0 that the timeseries is unstationary
-##Lags Used                     1.000000e+00
-#Number of Observations Used    1.050000e+02
-#Critical Value (1%)           -3.494220e+00
-#Critical Value (5%)           -2.889485e+00
-#Critical Value (10%)          -2.581676e+00
 
 # acf and pacf test
 from statsmodels.tsa.stattools import acf, pacf

@@ -2,12 +2,9 @@
 """
 Created on Mon Feb  3 22:11:28 2020
 
-@author: Eric Su
+@author: Yulu SU
 """
-# reference
-#https://www.statsmodels.org/dev/vector_ar.html
-#https://towardsdatascience.com/vector-autoregressions-vector-error-correction-multivariate-model-a69daf6ab618
-#https://towardsdatascience.com/prediction-task-with-multivariate-timeseries-and-var-model-47003f629f9
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm

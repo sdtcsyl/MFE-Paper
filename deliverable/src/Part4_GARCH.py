@@ -3,7 +3,6 @@
 @author: Yulu Su
 """
 
-#https://towardsdatascience.com/garch-processes-monte-carlo-simulations-for-analytical-forecast-27edf77b2787
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
