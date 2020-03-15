@@ -1,0 +1,3 @@
+1 0 0 10 Farrow-to-wean
+2 10 0 30 Wean-to-feeder
+3 40 0 240 Feeder-to-finish
